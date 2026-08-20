@@ -15,6 +15,13 @@
     "partially-achieved": "PARTIALLY ACHIEVED",
     "achieved": "ACHIEVED"
   };
+  const STATUS_PRINT_COLOR = {
+    "unreviewed": { color: "#6b7280", bg: "#eef0f3" },
+    "not-achieved": { color: "#b42330", bg: "#fbe4e4" },
+    "partially-achieved": { color: "#a9660a", bg: "#fbeed7" },
+    "achieved": { color: "#1a7f4b", bg: "#e3f7ec" }
+  };
+  const OBJECTIVE_COLOR = { A: "#7b2d6e", B: "#3e6fa8", C: "#c79a2e", D: "#2e9c87" };
 
   // ---------- State ----------
   let state = loadState();
@@ -383,6 +390,87 @@
   function todayStr() {
     return new Date().toISOString().slice(0, 10);
   }
+
+  // ---------- PDF report (browser print) ----------
+  function buildPrintReport() {
+    const root = document.getElementById("printReport");
+    root.innerHTML = "";
+    const all = allOutcomes().map(o => o.id);
+    const r = rollup(all);
+
+    const header = document.createElement("div");
+    header.innerHTML =
+      "<h1>CAF Audit Report</h1>" +
+      '<div class="pr-meta">' + escapeHtml(state.orgName || "—") + " &middot; Generated " +
+        new Date().toLocaleString("en-GB") + " &middot; NCSC Cyber Assessment Framework v4.0</div>" +
+      '<div class="pr-summary"><b>' + r.reviewed + "/" + r.total + " reviewed</b> — " +
+        r.counts.achieved + " Achieved, " + r.counts["partially-achieved"] + " Partially achieved, " +
+        r.counts["not-achieved"] + " Not achieved, " + r.counts.unreviewed + " Not yet reviewed</div>";
+    root.appendChild(header);
+
+    CAF_OBJECTIVES.forEach(obj => {
+      const principles = CAF_DATA.filter(p => p.objectiveId === obj.id);
+      const objColor = OBJECTIVE_COLOR[obj.id];
+      const objDiv = document.createElement("div");
+      objDiv.className = "pr-objective";
+      objDiv.style.color = objColor;
+
+      const h2 = document.createElement("h2");
+      h2.textContent = obj.id + " — " + obj.title;
+      objDiv.appendChild(h2);
+
+      principles.forEach(p => {
+        const pDiv = document.createElement("div");
+        pDiv.className = "pr-principle";
+        pDiv.style.color = objColor;
+
+        const h3 = document.createElement("h3");
+        h3.textContent = p.id + " " + p.title;
+        pDiv.appendChild(h3);
+
+        p.outcomes.forEach(o => {
+          const st = getOutcomeState(o.id);
+          const meta = STATUS_PRINT_COLOR[st.status];
+          const row = document.createElement("div");
+          row.className = "pr-outcome";
+          row.style.color = "#12172b";
+          row.innerHTML =
+            '<span><span class="pr-id">' + o.id + "</span>" + escapeHtml(o.title) + "</span>" +
+            '<span class="pr-status" style="color:' + meta.color + ";background:" + meta.bg + '">' +
+              STATUS_LABEL_LONG[st.status].toUpperCase() + "</span>";
+          pDiv.appendChild(row);
+          if (st.notes) {
+            const notesEl = document.createElement("div");
+            notesEl.className = "pr-notes";
+            notesEl.textContent = "Notes: " + st.notes;
+            pDiv.appendChild(notesEl);
+          }
+        });
+        objDiv.appendChild(pDiv);
+      });
+      root.appendChild(objDiv);
+    });
+
+    const diagramDiv = document.createElement("div");
+    diagramDiv.className = "pr-diagram";
+    diagramDiv.innerHTML =
+      '<img src="assets/ncsc-caf-diagram.png" alt="NCSC Cyber Assessment Framework objectives and principles overview">' +
+      "<p>Source: NCSC Cyber Assessment Framework v4.0 — ncsc.gov.uk/collection/cyber-assessment-framework (Open Government Licence)</p>";
+    root.appendChild(diagramDiv);
+  }
+
+  document.getElementById("exportPdfBtn").addEventListener("click", () => {
+    buildPrintReport();
+    closeSheet();
+    const img = document.querySelector("#printReport .pr-diagram img");
+    const doPrint = () => setTimeout(() => window.print(), 60);
+    if (img && !img.complete) {
+      img.addEventListener("load", doPrint, { once: true });
+      img.addEventListener("error", doPrint, { once: true });
+    } else {
+      doPrint();
+    }
+  });
 
   document.getElementById("exportJsonBtn").addEventListener("click", () => {
     saveState(true);

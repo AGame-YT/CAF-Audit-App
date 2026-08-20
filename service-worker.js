@@ -1,4 +1,4 @@
-const CACHE_NAME = "caf-audit-v3";
+const CACHE_NAME = "caf-audit-v4";
 const APP_SHELL = [
   "./",
   "index.html",
@@ -9,7 +9,8 @@ const APP_SHELL = [
   "icons/icon.svg",
   "icons/icon-180.png",
   "icons/icon-192.png",
-  "icons/icon-512.png"
+  "icons/icon-512.png",
+  "assets/ncsc-caf-diagram.png"
 ];
 
 self.addEventListener("install", (event) => {
