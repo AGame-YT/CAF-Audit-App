@@ -77,6 +77,14 @@
 
   <p class="empty-state" id="emptyState" hidden>No items match your search/filter.</p>
 
+  <section class="diagram-section">
+    <h2 class="objective-title">Framework overview</h2>
+    <div class="diagram-card">
+      <img src="assets/ncsc-caf-diagram.png" alt="NCSC Cyber Assessment Framework — the four objectives (A–D) and their principles" width="1920" height="1080" loading="lazy">
+    </div>
+    <p class="diagram-credit">Source: NCSC Cyber Assessment Framework v4.0 (Open Government Licence)</p>
+  </section>
+
   <footer class="app-footer">
     <p>Reference: <a href="https://www.ncsc.gov.uk/collection/cyber-assessment-framework" target="_blank" rel="noopener">NCSC Cyber Assessment Framework</a>. Data stays on this device only.</p>
   </footer>
@@ -103,14 +111,12 @@
     <button class="btn btn-danger" id="resetBtn">Reset all data</button>
   </div>
 
-  <p class="sheet-note">Backups export to your phone's Downloads/Files app — reopen them here after reinstalling or switching devices. PDF export opens the print dialog — on iPhone, pinch to zoom on the preview and use the share icon to save it.</p>
+  <p class="sheet-note">Backups export to your phone's Downloads/Files app — reopen them here after reinstalling or switching devices. PDF export opens the report in a new tab and tries to print it automatically — if nothing happens, use your browser's own Share/Print option on that tab.</p>
 
   <button class="btn btn-close" id="closeSheetBtn">Close</button>
 </div>
 
 <div class="toast" id="toast" hidden></div>
-
-<div id="printReport"></div>
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>

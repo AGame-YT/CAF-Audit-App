@@ -42,7 +42,7 @@ Other bits:
 - **☰ menu** — set an organisation/system name (shown on reports), export a PDF or plain-text report, export/restore a JSON backup, or reset everything.
 - Since it's a week-long job, **export a JSON backup** occasionally from the menu — it's the only copy of your data outside this one device/browser.
 
-**PDF export** builds a report (organisation, generated date, then every outcome as `A1.a Board Direction — ACHIEVED` with your notes underneath, grouped by objective/principle, finishing with NCSC's own objectives-and-principles diagram) and opens it via the browser's print dialog — choose **Save as PDF** as the destination. On iPhone, Safari's print preview doesn't offer a direct save: tap the share icon in the top-left of the preview screen and choose *Save to Files* (or share it another way) to get an actual PDF.
+**PDF export** builds a report (organisation, generated date, then every outcome as `A1.a Board Direction — ACHIEVED` with your notes underneath, grouped by objective/principle, finishing with NCSC's own objectives-and-principles diagram) and opens it in a new browser tab, then tries to trigger printing automatically — choose **Save as PDF** as the destination. It opens a real tab on purpose rather than printing in place, because `window.print()` doesn't reliably do anything inside an installed home-screen app (no browser chrome = nowhere for iOS to show the print sheet). If your browser blocks the pop-up, allow pop-ups for the site and try again; if a tab opens but nothing prints automatically, the report is sitting right there on screen — use your browser's own Share/Print option on it.
 
 ## Source
 
