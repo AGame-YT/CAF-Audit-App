@@ -1,5 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" fill="#0b1220"/>
-<path d="M256,70 L404,124 V246 C404,348 338,414 256,448 C174,414 108,348 108,246 V124 Z" fill="#3457d5"/>
-<path d="M178,252 L232,306 L340,190" fill="none" stroke="#ffffff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512">
+    <stop offset="0" stop-color="#04070d"/>
+    <stop offset="1" stop-color="#0e2450"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#22d3ee" stop-opacity="0.40"/>
+    <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="bokeh" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#3b82f6" stop-opacity="0.25"/>
+    <stop offset="1" stop-color="#3b82f6" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="shieldGrad" x1="140" y1="60" x2="380" y2="450">
+    <stop offset="0" stop-color="#7dd3fc"/>
+    <stop offset="0.5" stop-color="#3b82f6"/>
+    <stop offset="1" stop-color="#0891b2"/>
+  </linearGradient>
+</defs>
+
+<rect width="512" height="512" fill="url(#bg)"/>
+<circle cx="420" cy="90" r="150" fill="url(#bokeh)"/>
+<circle cx="66" cy="440" r="130" fill="url(#bokeh)"/>
+<circle cx="256" cy="260" r="215" fill="url(#glow)"/>
+
+<path d="M256,68 L406,124 V248 C406,350 340,416 256,450 C172,416 106,350 106,248 V124 Z"
+      fill="url(#shieldGrad)" stroke="#bfe9ff" stroke-opacity="0.55" stroke-width="4"/>
+
+<path d="M176,256 L230,312 L344,188" fill="none" stroke="#ffffff"
+      stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

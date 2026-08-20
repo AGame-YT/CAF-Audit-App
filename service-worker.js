@@ -1,4 +1,4 @@
-const CACHE_NAME = "caf-audit-v2";
+const CACHE_NAME = "caf-audit-v3";
 const APP_SHELL = [
   "./",
   "index.html",
