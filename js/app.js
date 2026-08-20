@@ -391,85 +391,104 @@
     return new Date().toISOString().slice(0, 10);
   }
 
-  // ---------- PDF report (browser print) ----------
-  function buildPrintReport() {
-    const root = document.getElementById("printReport");
-    root.innerHTML = "";
+  // ---------- PDF report (opens a real browser tab, since window.print()
+  // silently no-ops inside an installed/standalone home-screen PWA on iOS) ----------
+  function reportBodyHTML() {
     const all = allOutcomes().map(o => o.id);
     const r = rollup(all);
+    const diagramUrl = new URL("assets/ncsc-caf-diagram.png", location.href).href;
 
-    const header = document.createElement("div");
-    header.innerHTML =
-      "<h1>CAF Audit Report</h1>" +
-      '<div class="pr-meta">' + escapeHtml(state.orgName || "—") + " &middot; Generated " +
-        new Date().toLocaleString("en-GB") + " &middot; NCSC Cyber Assessment Framework v4.0</div>" +
-      '<div class="pr-summary"><b>' + r.reviewed + "/" + r.total + " reviewed</b> — " +
-        r.counts.achieved + " Achieved, " + r.counts["partially-achieved"] + " Partially achieved, " +
-        r.counts["not-achieved"] + " Not achieved, " + r.counts.unreviewed + " Not yet reviewed</div>";
-    root.appendChild(header);
+    let html = "<h1>CAF Audit Report</h1>";
+    html += '<div class="pr-meta">' + escapeHtml(state.orgName || "—") + " &middot; Generated " +
+      new Date().toLocaleString("en-GB") + " &middot; NCSC Cyber Assessment Framework v4.0</div>";
+    html += '<div class="pr-summary"><b>' + r.reviewed + "/" + r.total + " reviewed</b> — " +
+      r.counts.achieved + " Achieved, " + r.counts["partially-achieved"] + " Partially achieved, " +
+      r.counts["not-achieved"] + " Not achieved, " + r.counts.unreviewed + " Not yet reviewed</div>";
 
     CAF_OBJECTIVES.forEach(obj => {
       const principles = CAF_DATA.filter(p => p.objectiveId === obj.id);
       const objColor = OBJECTIVE_COLOR[obj.id];
-      const objDiv = document.createElement("div");
-      objDiv.className = "pr-objective";
-      objDiv.style.color = objColor;
-
-      const h2 = document.createElement("h2");
-      h2.textContent = obj.id + " — " + obj.title;
-      objDiv.appendChild(h2);
+      html += '<div class="pr-objective" style="color:' + objColor + '">';
+      html += "<h2>" + obj.id + " — " + escapeHtml(obj.title) + "</h2>";
 
       principles.forEach(p => {
-        const pDiv = document.createElement("div");
-        pDiv.className = "pr-principle";
-        pDiv.style.color = objColor;
-
-        const h3 = document.createElement("h3");
-        h3.textContent = p.id + " " + p.title;
-        pDiv.appendChild(h3);
-
+        html += '<div class="pr-principle" style="color:' + objColor + '">';
+        html += "<h3>" + p.id + " " + escapeHtml(p.title) + "</h3>";
         p.outcomes.forEach(o => {
           const st = getOutcomeState(o.id);
           const meta = STATUS_PRINT_COLOR[st.status];
-          const row = document.createElement("div");
-          row.className = "pr-outcome";
-          row.style.color = "#12172b";
-          row.innerHTML =
-            '<span><span class="pr-id">' + o.id + "</span>" + escapeHtml(o.title) + "</span>" +
+          html += '<div class="pr-outcome"><span><span class="pr-id">' + o.id + "</span>" +
+            escapeHtml(o.title) + "</span>" +
             '<span class="pr-status" style="color:' + meta.color + ";background:" + meta.bg + '">' +
-              STATUS_LABEL_LONG[st.status].toUpperCase() + "</span>";
-          pDiv.appendChild(row);
+            STATUS_LABEL_LONG[st.status].toUpperCase() + "</span></div>";
           if (st.notes) {
-            const notesEl = document.createElement("div");
-            notesEl.className = "pr-notes";
-            notesEl.textContent = "Notes: " + st.notes;
-            pDiv.appendChild(notesEl);
+            html += '<div class="pr-notes">Notes: ' + escapeHtml(st.notes) + "</div>";
           }
         });
-        objDiv.appendChild(pDiv);
+        html += "</div>";
       });
-      root.appendChild(objDiv);
+      html += "</div>";
     });
 
-    const diagramDiv = document.createElement("div");
-    diagramDiv.className = "pr-diagram";
-    diagramDiv.innerHTML =
-      '<img src="assets/ncsc-caf-diagram.png" alt="NCSC Cyber Assessment Framework objectives and principles overview">' +
-      "<p>Source: NCSC Cyber Assessment Framework v4.0 — ncsc.gov.uk/collection/cyber-assessment-framework (Open Government Licence)</p>";
-    root.appendChild(diagramDiv);
+    html += '<div class="pr-diagram"><img src="' + diagramUrl +
+      '" alt="NCSC Cyber Assessment Framework objectives and principles overview">' +
+      "<p>Source: NCSC Cyber Assessment Framework v4.0 — ncsc.gov.uk/collection/cyber-assessment-framework (Open Government Licence)</p></div>";
+
+    html += '<p class="pr-hint">If a print dialog didn’t open automatically, use your browser’s Print or Share option now — the report is already right here.</p>';
+
+    return html;
+  }
+
+  const PRINT_DOC_STYLE =
+    "@page { margin: 14mm 12mm; } * { box-sizing: border-box; } " +
+    "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; " +
+      "background:#fff; color:#12172b; max-width: 800px; margin: 0 auto; padding: 24px 20px 60px; } " +
+    "h1 { font-size: 22px; margin: 0 0 4px; } " +
+    ".pr-meta { font-size: 12px; color:#555; margin-bottom: 6px; } " +
+    ".pr-summary { font-size: 13px; margin: 10px 0 20px; padding: 10px 14px; background:#f4f6fb; border-radius:8px; border:1px solid #e0e4ee; } " +
+    ".pr-objective { margin-top: 22px; } " +
+    ".pr-objective h2 { font-size: 14px; text-transform: uppercase; letter-spacing:0.04em; margin:0 0 8px; padding-bottom:4px; border-bottom: 2px solid currentColor; } " +
+    ".pr-principle { margin: 0 0 14px; break-inside: avoid; } " +
+    ".pr-principle h3 { font-size: 13px; margin:0 0 5px; padding-left:8px; border-left:3px solid currentColor; } " +
+    ".pr-outcome { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:4px 0 4px 11px; border-bottom:1px solid #eee; font-size:12px; color:#12172b; } " +
+    ".pr-id { font-weight:700; margin-right:6px; } " +
+    ".pr-status { font-weight:700; font-size:10px; letter-spacing:0.02em; padding:2px 8px; border-radius:999px; white-space:nowrap; } " +
+    ".pr-notes { font-size:11px; color:#555; font-style:italic; padding:2px 0 7px 11px; } " +
+    ".pr-diagram { text-align:center; padding-top:40px; break-before: page; } " +
+    ".pr-diagram img { max-width:100%; height:auto; } " +
+    ".pr-diagram p { font-size:10px; color:#888; margin-top:10px; } " +
+    ".pr-hint { font-size:12px; color:#888; text-align:center; margin: 34px 0 0; } " +
+    "@media print { .pr-hint { display:none; } }";
+
+  function openPdfReport() {
+    const win = window.open("", "_blank");
+    if (!win) {
+      showToast("Pop-up blocked — allow pop-ups for this site, then try again");
+      return;
+    }
+    const doc = "<!DOCTYPE html><html lang=\"en-GB\"><head><meta charset=\"UTF-8\">" +
+      "<title>CAF Audit Report</title><style>" + PRINT_DOC_STYLE + "</style></head><body>" +
+      reportBodyHTML() + "</body></html>";
+
+    win.document.open();
+    win.document.write(doc);
+    win.document.close();
+
+    const tryPrint = () => { try { win.print(); } catch (e) {} };
+    const img = win.document.querySelector(".pr-diagram img");
+    if (img && !img.complete) {
+      img.addEventListener("load", () => setTimeout(tryPrint, 80), { once: true });
+      img.addEventListener("error", () => setTimeout(tryPrint, 80), { once: true });
+      setTimeout(tryPrint, 1500);
+    } else {
+      setTimeout(tryPrint, 150);
+    }
+    try { win.onafterprint = () => win.close(); } catch (e) {}
   }
 
   document.getElementById("exportPdfBtn").addEventListener("click", () => {
-    buildPrintReport();
+    openPdfReport();
     closeSheet();
-    const img = document.querySelector("#printReport .pr-diagram img");
-    const doPrint = () => setTimeout(() => window.print(), 60);
-    if (img && !img.complete) {
-      img.addEventListener("load", doPrint, { once: true });
-      img.addEventListener("error", doPrint, { once: true });
-    } else {
-      doPrint();
-    }
   });
 
   document.getElementById("exportJsonBtn").addEventListener("click", () => {
