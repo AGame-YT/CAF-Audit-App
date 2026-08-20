@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CAF Audit Tracker</title>
+<meta name="description" content="Offline self-assessment tracker for the NCSC Cyber Assessment Framework (CAF) v4.0">
+
+<!-- PWA / installability -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CAF Audit">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Top bar: title + summary dashboard -->
+  <header class="topbar">
+    <div class="topbar-row">
+      <div class="brand">
+        <span class="brand-title">CAF Audit Tracker</span>
+        <span class="brand-sub" id="orgLabel">NCSC Cyber Assessment Framework v4.0</span>
+      </div>
+      <button class="icon-btn" id="menuBtn" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+      </button>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+      <div class="progress-track" role="progressbar" aria-label="Overall review progress" id="progressBar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="dash-row">
+        <span class="dash-frac" id="progressFrac">0 / 0 reviewed</span>
+        <div class="rag-counts" id="ragCounts">
+          <span class="chip chip-green" data-status="achieved"><b id="countAchieved">0</b> Green</span>
+          <span class="chip chip-amber" data-status="partially-achieved"><b id="countPartial">0</b> Amber</span>
+          <span class="chip chip-red" data-status="not-achieved"><b id="countNot">0</b> Red</span>
+          <span class="chip chip-grey" data-status="unreviewed"><b id="countUnreviewed">0</b> To do</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filter / search bar -->
+  <div class="filterbar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="search-icon"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 5L20.49 19zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14"/></svg>
+      <input type="search" id="searchInput" placeholder="Search principles or outcomes…" aria-label="Search">
+    </div>
+    <div class="filter-chips" id="filterChips">
+      <button class="filter-chip active" data-filter="all">All</button>
+      <button class="filter-chip" data-filter="unreviewed">To do</button>
+      <button class="filter-chip filter-red" data-filter="not-achieved">Red</button>
+      <button class="filter-chip filter-amber" data-filter="partially-achieved">Amber</button>
+      <button class="filter-chip filter-green" data-filter="achieved">Green</button>
+    </div>
+  </div>
+
+  <button class="jump-btn" id="jumpNextBtn" type="button">
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+    Jump to next item to review
+  </button>
+
+  <!-- Main content: objectives / principles / outcomes rendered by JS -->
+  <main id="content" aria-live="polite"></main>
+
+  <p class="empty-state" id="emptyState" hidden>No items match your search/filter.</p>
+
+  <footer class="app-footer">
+    <p>Reference: <a href="https://www.ncsc.gov.uk/collection/cyber-assessment-framework" target="_blank" rel="noopener">NCSC Cyber Assessment Framework</a>. Data stays on this device only.</p>
+  </footer>
+
+</div>
+
+<!-- Slide-up menu panel -->
+<div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="sheet-handle"></div>
+  <h2>Menu</h2>
+
+  <label class="field">
+    <span>Organisation / system name (shown on reports)</span>
+    <input type="text" id="orgNameInput" placeholder="e.g. Acme Ltd — Production network">
+  </label>
+
+  <div class="sheet-actions">
+    <button class="btn" id="exportReportBtn">Export report (text)</button>
+    <button class="btn" id="exportJsonBtn">Export backup (JSON)</button>
+    <button class="btn" id="importJsonBtn">Import backup (JSON)</button>
+    <input type="file" id="importFileInput" accept="application/json" hidden>
+    <button class="btn btn-danger" id="resetBtn">Reset all data</button>
+  </div>
+
+  <p class="sheet-note">Backups export to your phone's Downloads/Files app — reopen them here after reinstalling or switching devices.</p>
+
+  <button class="btn btn-close" id="closeSheetBtn">Close</button>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
