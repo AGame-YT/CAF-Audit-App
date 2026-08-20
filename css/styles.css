@@ -400,3 +400,51 @@ a { color: var(--accent); }
 @media (min-width: 600px) {
   .status-row { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ---------- Print / PDF report ---------- */
+#printReport { display: none; }
+
+@media print {
+  #app, .sheet-backdrop, .sheet, .toast { display: none !important; }
+  #printReport { display: block !important; }
+
+  @page { margin: 14mm 12mm; }
+
+  #printReport {
+    background: #ffffff;
+    color: #12172b;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    max-width: 100%;
+  }
+  #printReport h1 { font-size: 20px; margin: 0 0 4px; }
+  #printReport .pr-meta { font-size: 11px; color: #555555; margin-bottom: 10px; }
+  #printReport .pr-summary {
+    font-size: 12px; margin: 0 0 18px; padding: 8px 12px;
+    background: #f4f6fb; border-radius: 6px; border: 1px solid #e0e4ee;
+  }
+  #printReport .pr-objective { margin-top: 18px; }
+  #printReport .pr-objective h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;
+    margin: 0 0 8px; padding-bottom: 4px; border-bottom: 2px solid currentColor;
+  }
+  #printReport .pr-principle { margin: 0 0 12px; break-inside: avoid; }
+  #printReport .pr-principle h3 {
+    font-size: 12.5px; margin: 0 0 4px; padding-left: 7px; border-left: 3px solid currentColor;
+  }
+  #printReport .pr-outcome {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    padding: 3px 0 3px 10px; border-bottom: 1px solid #eeeeee; font-size: 11px;
+  }
+  #printReport .pr-id { font-weight: 700; margin-right: 6px; }
+  #printReport .pr-status {
+    font-weight: 700; font-size: 9.5px; letter-spacing: 0.02em;
+    padding: 1px 7px; border-radius: 999px; white-space: nowrap;
+  }
+  #printReport .pr-notes {
+    font-size: 10.5px; color: #555555; font-style: italic;
+    padding: 1px 0 6px 10px;
+  }
+  #printReport .pr-diagram { break-before: page; text-align: center; padding-top: 30px; }
+  #printReport .pr-diagram img { max-width: 100%; height: auto; }
+  #printReport .pr-diagram p { font-size: 9px; color: #888888; margin-top: 10px; }
+}

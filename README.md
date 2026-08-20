@@ -39,8 +39,10 @@ Tap **Show indicators of good practice** on any outcome to see NCSC's actual gui
 Other bits:
 - **Jump to next item to review** — jumps straight to the next unreviewed outcome, in order.
 - **Search / filter chips** — filter down to just Red items, or search e.g. "backup" or "MFA" across every outcome's guidance text.
-- **☰ menu** — set an organisation/system name (shown on reports), export a plain-text report or a JSON backup, restore from a backup, or reset everything.
+- **☰ menu** — set an organisation/system name (shown on reports), export a PDF or plain-text report, export/restore a JSON backup, or reset everything.
 - Since it's a week-long job, **export a JSON backup** occasionally from the menu — it's the only copy of your data outside this one device/browser.
+
+**PDF export** builds a report (organisation, generated date, then every outcome as `A1.a Board Direction — ACHIEVED` with your notes underneath, grouped by objective/principle, finishing with NCSC's own objectives-and-principles diagram) and opens it via the browser's print dialog — choose **Save as PDF** as the destination. On iPhone, Safari's print preview doesn't offer a direct save: tap the share icon in the top-left of the preview screen and choose *Save to Files* (or share it another way) to get an actual PDF.
 
 ## Source
 

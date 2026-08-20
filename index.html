@@ -95,6 +95,7 @@
   </label>
 
   <div class="sheet-actions">
+    <button class="btn" id="exportPdfBtn">Export report (PDF)</button>
     <button class="btn" id="exportReportBtn">Export report (text)</button>
     <button class="btn" id="exportJsonBtn">Export backup (JSON)</button>
     <button class="btn" id="importJsonBtn">Import backup (JSON)</button>
@@ -102,12 +103,14 @@
     <button class="btn btn-danger" id="resetBtn">Reset all data</button>
   </div>
 
-  <p class="sheet-note">Backups export to your phone's Downloads/Files app — reopen them here after reinstalling or switching devices.</p>
+  <p class="sheet-note">Backups export to your phone's Downloads/Files app — reopen them here after reinstalling or switching devices. PDF export opens the print dialog — on iPhone, pinch to zoom on the preview and use the share icon to save it.</p>
 
   <button class="btn btn-close" id="closeSheetBtn">Close</button>
 </div>
 
 <div class="toast" id="toast" hidden></div>
+
+<div id="printReport"></div>
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
